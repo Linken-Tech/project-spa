@@ -29,6 +29,7 @@ npm install
 npm start
 
 ### Backend - Django Rest Framework
+TODO: Need to refactor this
 make another new terminal
 cd backend
 python -m venv env (CREATE a new environment)
