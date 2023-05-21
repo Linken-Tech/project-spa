@@ -45,7 +45,6 @@ resource "aws_db_parameter_group" "custom_parameter_group_psql14" {
 }
 
 resource "aws_db_instance" "rds_cluster" {
-  deletion_protection          = true
   allocated_storage            = var.allocated_storage
   max_allocated_storage        = var.max_allocated_storage
   engine                       = "postgres"
