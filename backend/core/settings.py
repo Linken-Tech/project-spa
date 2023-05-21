@@ -141,11 +141,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-<<<<<<< HEAD
-USE_S3 = True
-=======
 USE_S3 = config('USE_S3') == 'True'
->>>>>>> 20822960ea0fc3873c88d76ff235eef36acb1bf5
 
 if USE_S3:
     # aws settings
@@ -174,11 +170,6 @@ else:
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
-<<<<<<< HEAD
-=======
-
-
->>>>>>> 20822960ea0fc3873c88d76ff235eef36acb1bf5
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
