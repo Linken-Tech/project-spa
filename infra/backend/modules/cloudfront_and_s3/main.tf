@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "bucket" {
-  bucket = var.bucket_name
+  bucket        = var.bucket_name
   force_destroy = true
 }
 
@@ -9,8 +9,12 @@ resource "aws_cloudfront_origin_access_identity" "this" {
 
 data "aws_iam_policy_document" "this" {
   statement {
-    effect    = "Allow"
-    actions   = ["s3:GetObject"]
+    effect = "Allow"
+    actions = ["s3:GetObject", "s3:PutObject",
+      "s3:PutObjectAcl",
+      "s3:GetObject",
+      "s3:GetObjectAcl",
+      "s3:DeleteObject"]
     resources = ["${aws_s3_bucket.bucket.arn}/*"]
 
     principals {
@@ -22,9 +26,36 @@ data "aws_iam_policy_document" "this" {
 resource "aws_s3_bucket_cors_configuration" "config_cors" {
   bucket = aws_s3_bucket.bucket.bucket
   cors_rule {
-    allowed_methods = ["GET"]
+    allowed_methods = ["GET", "PUT", "POST", "HEAD", "DELETE"]
     allowed_origins = ["*"]
+    allowed_headers = ["*"]
   }
+}
+
+resource "aws_s3_bucket_ownership_controls" "example" {
+  bucket = aws_s3_bucket.bucket.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "example" {
+  bucket = aws_s3_bucket.bucket.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
+resource "aws_s3_bucket_acl" "example" {
+  depends_on = [
+    aws_s3_bucket_ownership_controls.example,
+    aws_s3_bucket_public_access_block.example,
+  ]
+
+  bucket = aws_s3_bucket.bucket.id
+  acl    = "public-read"
 }
 
 resource "aws_s3_bucket_policy" "this" {
@@ -78,16 +109,16 @@ resource "aws_cloudfront_distribution" "cloudfront" {
     }
   }
   custom_error_response {
-    error_code = 403
+    error_code            = 403
     error_caching_min_ttl = 300
-    response_code = 200
-    response_page_path = "/index.html"
+    response_code         = 200
+    response_page_path    = "/index.html"
   }
   custom_error_response {
-    error_code = 404
+    error_code            = 404
     error_caching_min_ttl = 300
-    response_code = 200
-    response_page_path = "/index.html"
+    response_code         = 200
+    response_page_path    = "/index.html"
   }
 
 }
