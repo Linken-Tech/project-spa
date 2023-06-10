@@ -57,10 +57,10 @@ resource "aws_ssm_parameter" "static_cloudfront_url" {
 
 locals {
   ssm_params = concat(
-    [for param in var.set_manually : {
-      name      = param
-      valueFrom = "${param}"
-    }],
+    # [for param in var.set_manually : {
+    #   name      = param
+    #   valueFrom = "${param}"
+    # }],
     [
       {
         name      = aws_ssm_parameter.db_password.name
