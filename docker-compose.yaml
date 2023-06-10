@@ -1,7 +1,8 @@
 version: '3.9'
 services:
   backend:
-    container_name: 375446058757.dkr.ecr.ap-southeast-1.amazonaws.com/spa-develop-server-ecr
+    container_name: spa-backend
+    image: 375446058757.dkr.ecr.ap-southeast-1.amazonaws.com/spa-develop-server-ecr
     entrypoint: [ "/app/api/entrypoint.sh" ]
     command: "gunicorn core.wsgi:application --config=gunicorn.py"
     build:
