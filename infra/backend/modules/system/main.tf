@@ -24,9 +24,9 @@ resource "aws_security_group" "ecs_task_security_group_default" {
     to_port     = 0
   }
   ingress {
-    from_port       = 8001
+    from_port       = 8000
     protocol        = "TCP"
-    to_port         = 8001
+    to_port         = 8000
     security_groups = ["${aws_security_group.load_balance_secrurity_group.id}"]
   }
 
@@ -215,14 +215,14 @@ module "server" {
   region             = var.region
   cpu                = var.server_cpu
   memory             = var.server_ram
-  containerport      = 8001
+  containerport      = 8000
   secrets            = module.env_vars.ssm_params
   environment        = module.env_vars.environment
   ecr_name           = module.server_ecr_repo.repository_url
   listener_arn       = module.ALB.listener.arn
   healthcheck        = "/health-check/"
-  command            = ["gunicorn", "--config=gunicorn.py", "core.wsgi:application"]
-  entry_point        = ["/app/entrypoint.sh"]
+  command            = ["gunicorn", "core.wsgi:application", "--config=gunicorn.py"]
+  entry_point        = ["/app/api/entrypoint.sh"]
 }
 
 module "static_file" {
