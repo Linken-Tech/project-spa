@@ -11,6 +11,8 @@ urlpatterns = [
     path('vehicle/', views.VehicleList.as_view()),
     # View, Update, Delete Car Details
     path('vehicle/<pk>/', views.VehicleDetails.as_view()),
+    # Download Vehicle Documents
+    path('vehicle-document/<pk>/download/', views.DownloadVehicleDocuments.as_view())
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
