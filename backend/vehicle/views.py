@@ -8,6 +8,7 @@ import zipfile
 from django.http import HttpResponse
 from core import settings
 import io
+from django.shortcuts import get_list_or_404
 
 # Vehicle Brand Here
 class BrandList(generics.ListCreateAPIView):
@@ -58,19 +59,27 @@ class VehicleDetails(generics.RetrieveUpdateDestroyAPIView):
         return instance.save()
 
 class DownloadVehicleDocuments(generics.RetrieveAPIView):
+    """
+    Download Vehicle Document
+    """
     queryset = VehicleDocument.objects.all()
     serializer_class = vehicle_srlz.DownloadVehicleDocumentSerializer
+    lookup_field = 'vehicle'
 
     def get(self, request, *args, **kwargs):
-        queryset = self.get_queryset().values('vehicle', 'document')
+        doc_id = request.GET.getlist('doc_id', [])
         files = []
+        if doc_id:
+            queryset = get_list_or_404(VehicleDocument, pk__in=doc_id, removed__isnull=True)
+        else:
+            queryset = self.get_queryset().exclude(removed__isnull=False)
 
         for filenames in queryset:
-            get_vehicle = Vehicle.objects.filter(id=filenames.get('vehicle')).first()
-            file_format = os.path.join(settings.MEDIA_ROOT, filenames.get('document'))
+            get_vehicle = filenames.vehicle
+            file_format = os.path.join(settings.MEDIA_ROOT, str(filenames.document))
             files.append(file_format)
 
-        zip_subdir = "%s-%s" % (get_vehicle.vehicle,get_vehicle.vehicle_brand)
+        zip_subdir = "%s-%s" % (get_vehicle, get_vehicle.vehicle_brand)
         zip_filename = "%s.zip" % zip_subdir
 
         s = io.BytesIO()
