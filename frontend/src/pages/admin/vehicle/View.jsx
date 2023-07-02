@@ -8,14 +8,11 @@ import paginationFactory from 'react-bootstrap-table2-paginator';
 import ToolkitProvider, { Search, } from "react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit";
 import vehicleData from "../../../assets/data/vehicleData";
 import "../../../styles/common-section.css";
-import { getVehicles, deleteVehicle, downloadVehicleDocument } from "../../../services/api/Provider";
+import { getVehicles, deleteVehicle, downloadVehicleDocument, BASE_URL, VEHICLE_DOC_URL } from "../../../services/api/Provider";
 
 function ViewVehicles() {
   const { SearchBar } = Search;
   const [vehicles, setVehicles] = useState([]);
-  // const [zipDocumentUrl, setZipDocumentUrl] = useState('');
-  // const [zipDocumentName, setZipDocumentName] = useState('');
-  // const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
 
   const navigate = useNavigate();
   const updateVehicle = (id, accessories, images, documents) =>{
@@ -35,40 +32,31 @@ function ViewVehicles() {
   }
   
   async function _downloadVehicleDocument(id) {
-    // const BASE_URL = process.env.REACT_APP_API_BASE_URL;
     await downloadVehicleDocument(id)
-    .then((response) => {
-      console.log(response)
-      const url = window.URL.createObjectURL(new Blob([response], {type: 'applicate/zip'}));
+    .then(() => {
       const link = document.createElement('a');
-      link.href = url
-      link.setAttribute("download", "receipt.zip");
+      const filename = "vehicle 2wq-brand 1.zip";
+      link.href = `${BASE_URL}/${VEHICLE_DOC_URL}${id}/download/`
+      document.body.appendChild(link);
       link.click();
-      // link.download = 'vehicle.zip'
-      // document.body.appendChild(link);
-      // link.click();
-      // document.body.removeChild(link);
-      // window.URL.revokeObjectURL(url);
+      document.body.removeChild(link);
     })
-  }
-      
 
-      // console.log(response)
-      // return response.blob();
-    // })
-    // .then((blob) => {
-      // const blob = new Blob([arrayBuffer], { type: 'application/zip' });
-    
-    // })
-      // const link = document.createElement('a');
-      // // const filename = "vehicle 2wq-brand 1.zip";
-      // link.href = `${BASE_URL}/vehicle/vehicle-document/${id}/download/`
-      // // link.download = filename
-  
-      // document.body.appendChild(link);
-      // link.click();
-      // document.body.removeChild(link);
-    // })
+    // 2nd method to download zip file but facing an issue (file type or format is unsupported) when opening zip file
+
+      //   => response.blob())
+      //   .then((blob) => {
+      //     const url = window.URL.createObjectURL(new Blob([blob], {type: 'application/zip'}));
+      //     const link = document.createElement('a');
+      //     link.href = url
+      //     link.setAttribute("download", "receipt.zip");
+      //     document.body.appendChild(link);
+      //     link.click();
+      //     document.body.removeChild(link);
+      //     // window.URL.revokeObjectURL(url);
+      //     })
+      // }
+  }
     
 
   const columns = [

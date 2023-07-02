@@ -70,7 +70,7 @@ class DownloadVehicleDocuments(generics.GenericAPIView):
         queryset = super().get_queryset().filter(vehicle=self.kwargs.get('vehicle')).exclude(removed__isnull=False)
         return queryset
 
-    def post(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         doc_id = request.GET.getlist('doc_id', [])
         files = []
         if doc_id:
