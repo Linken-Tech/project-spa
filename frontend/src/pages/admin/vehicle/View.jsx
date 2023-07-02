@@ -35,21 +35,27 @@ function ViewVehicles() {
   }
   
   async function _downloadVehicleDocument(id) {
-    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+    // const BASE_URL = process.env.REACT_APP_API_BASE_URL;
     await downloadVehicleDocument(id)
     .then((response) => {
-      const url = window.URL.createObjectURL(new Blob([response], {type: "application/zip"}));
+      console.log(response)
+      const url = window.URL.createObjectURL(new Blob([response], {type: 'applicate/zip'}));
       const link = document.createElement('a');
       link.href = url
-      link.download = 'vehicle'
-      document.body.appendChild(link);
+      link.setAttribute("download", "receipt.zip");
       link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      // link.download = 'vehicle.zip'
+      // document.body.appendChild(link);
+      // link.click();
+      // document.body.removeChild(link);
+      // window.URL.revokeObjectURL(url);
+    })
+  }
+      
 
       // console.log(response)
       // return response.blob();
-    })
+    // })
     // .then((blob) => {
       // const blob = new Blob([arrayBuffer], { type: 'application/zip' });
     
@@ -63,10 +69,7 @@ function ViewVehicles() {
       // link.click();
       // document.body.removeChild(link);
     // })
-    .catch((error) => {
-      console.error('Error fetching ZIP file:', error);
-    });
-  }
+    
 
   const columns = [
     {

@@ -106,7 +106,7 @@ export function deleteVehicle(id){
 
 export function downloadVehicleDocument(id) {
   return axios
-  .get(`${BASE_URL}/${VEHICLE_DOC_URL}${id}/download/`)
+  .post(`${BASE_URL}/${VEHICLE_DOC_URL}${id}/download/`)
   .then(handleResponse)
   .catch(handleError);
 };

@@ -58,7 +58,7 @@ class VehicleDetails(generics.RetrieveUpdateDestroyAPIView):
         instance.removed = timezone.now()
         return instance.save()
 
-class DownloadVehicleDocuments(generics.RetrieveAPIView):
+class DownloadVehicleDocuments(generics.GenericAPIView):
     """
     Download Vehicle Document
     """
@@ -70,7 +70,7 @@ class DownloadVehicleDocuments(generics.RetrieveAPIView):
         queryset = super().get_queryset().filter(vehicle=self.kwargs.get('vehicle')).exclude(removed__isnull=False)
         return queryset
 
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         doc_id = request.GET.getlist('doc_id', [])
         files = []
         if doc_id:
@@ -96,7 +96,7 @@ class DownloadVehicleDocuments(generics.RetrieveAPIView):
                 zf.write(fpath, zip_path)
             zf.close()
 
-            response = HttpResponse(s.getvalue(), content_type = "application/x-zip-compressed")
+            response = HttpResponse(s.getvalue(), content_type = "application/zip")
             response['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
 
             return response
