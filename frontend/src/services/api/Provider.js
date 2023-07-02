@@ -5,6 +5,7 @@ const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const AUTH_URL = "api/token/"
 const BRANDS_URL = 'vehicle/brand/'; 
 const VEHICLE_URL = 'vehicle/vehicle/';
+const VEHICLE_DOC_URL = 'vehicle/vehicle-document/';
 
 // Authentication
 
@@ -102,6 +103,13 @@ export function deleteVehicle(id){
     .then(handleResponse) 
     .catch(handleError); 
 }; 
+
+export function downloadVehicleDocument(id) {
+  return axios
+  .get(`${BASE_URL}/${VEHICLE_DOC_URL}${id}/download/`)
+  .then(handleResponse)
+  .catch(handleError);
+};
 
 export default {
   login

@@ -5,7 +5,7 @@ from vehicle import serializers as vehicle_srlz
 from django.utils import timezone 
 import os
 import zipfile
-from django.http import HttpResponse
+from django.http import Http404, HttpResponse
 from core import settings
 import io
 from django.shortcuts import get_list_or_404
@@ -66,33 +66,38 @@ class DownloadVehicleDocuments(generics.RetrieveAPIView):
     serializer_class = vehicle_srlz.DownloadVehicleDocumentSerializer
     lookup_field = 'vehicle'
 
+    def get_queryset(self):
+        queryset = super().get_queryset().filter(vehicle=self.kwargs.get('vehicle')).exclude(removed__isnull=False)
+        return queryset
+
     def get(self, request, *args, **kwargs):
         doc_id = request.GET.getlist('doc_id', [])
         files = []
         if doc_id:
             queryset = get_list_or_404(VehicleDocument, pk__in=doc_id, removed__isnull=True)
         else:
-            queryset = self.get_queryset().exclude(removed__isnull=False)
+            queryset = self.get_queryset()
 
-        for filenames in queryset:
-            get_vehicle = filenames.vehicle
-            file_format = os.path.join(settings.MEDIA_ROOT, str(filenames.document))
-            files.append(file_format)
+        if queryset:
+            for vehicle in queryset:
+                file_format = os.path.join(settings.MEDIA_ROOT, str(vehicle.document))
+                files.append(file_format)
 
-        zip_subdir = "%s-%s" % (get_vehicle, get_vehicle.vehicle_brand)
-        zip_filename = "%s.zip" % zip_subdir
+            zip_subdir = "%s(%s)" % (vehicle.vehicle, vehicle.vehicle.model_year)
+            zip_filename = "%s.zip" % zip_subdir
 
-        s = io.BytesIO()
-        zf = zipfile.ZipFile(s, "w")
+            s = io.BytesIO()
+            zf = zipfile.ZipFile(s, "w")
 
-        for fpath in files:
-            fdir, fname = os.path.split(fpath)
-            zip_path = os.path.join(zip_subdir, fname)
+            for fpath in files:
+                fdir, fname = os.path.split(fpath)
+                zip_path = os.path.join(zip_subdir, fname)
 
-            zf.write(fpath, zip_path)
-        zf.close()
+                zf.write(fpath, zip_path)
+            zf.close()
 
-        response = HttpResponse(s.getvalue(), content_type = "application/x-zip-compressed")
-        response['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
+            response = HttpResponse(s.getvalue(), content_type = "application/x-zip-compressed")
+            response['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
 
-        return response
+            return response
+        raise Http404
