@@ -8,17 +8,16 @@ can refer this documentation
 https://www.django-rest-framework.org/tutorial/3-class-based-views/
 
 """
-
-from django.shortcuts import render
 from feedback.models import Feedback
 from rest_framework import generics
-from rest_framework.views import APIView
-from feedback.serializers import FeedbackSerializer
-from rest_framework.response import Response
+from feedback import serializers as feedback_srlz
 
-# Feedback
-class Feedback(APIView):
-    def get(self, request, format=None):
-        feedback = feedback.objects.all()
-        serializer = FeedbackSerializer(feedback, many=True)
-        return Response(serializer.data)
+
+class FeedbackList(generics.ListCreateAPIView):
+    queryset = Feedback.objects.all()
+    serializer_class = feedback_srlz.FeedbackSerializer
+
+
+class FeedbackDetails(generics.RetrieveUpdateAPIView):
+    queryset = Feedback.objects.all()
+    serializer_class = feedback_srlz.FeedbackSerializer
