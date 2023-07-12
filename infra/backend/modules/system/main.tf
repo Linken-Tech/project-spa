@@ -149,20 +149,20 @@ module "Postgres" {
   max_allocated_storage        = "1000"
   password                     = random_password.database_password.result
   project                      = var.project
-  subnetIds                    = module.vpc.private_subnets
+  subnetIds                    = module.vpc.public_subnets
   username                     = var.db_user_name
   vpc_security_group_ids       = ["${aws_security_group.rds_secrurity_group.id}"]
   allocated_storage            = var.db_storage
   db_name                      = var.db_name
   env                          = var.env
   multi_az                     = var.rds_multi_az
-  performance_insights_enabled = "true"
+  performance_insights_enabled = "false"
 }
 
 
 # ##ECS-Cluster
 resource "aws_ecs_cluster" "ecs_cluster" {
-  name = "${var.project}-cluster" # Need Testing cluster instead
+  name = "${var.project}-cluster-${var.env}" # Need Testing cluster instead
 
   setting {
     name  = "containerInsights"
