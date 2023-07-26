@@ -4,7 +4,7 @@ import accessoriesData from "../../../assets/data/accessoriesData.js";
 import "../../../styles/common-section.css";
 import { getBrands, addVehicle } from "../../../services/api/Provider";
 
-const accessoriesList = []
+let accessoriesList = []
 
 const AddVehicles = () => {
   const salesTypeData = [ { id: 1, name: "Rental", }, { id: 2, name: "Sale", },];
@@ -91,16 +91,18 @@ const AddVehicles = () => {
     setModelYear('');
     setSeatingCapacity('');
     setMileage('');
-    if (accessories.length != 0) {
-      setAccessories([])
-    }
+    setAccessories([]);
+    accessoriesList = [];
     if (vehicleImages.length != 0) {
-      setVehicleImages([])
+      setVehicleImages([]);
     }
     if (vehicleDocuments.length != 0) {
-      setVehicleDocuments([])
+      setVehicleDocuments([]);
     }
     document.getElementById("vehicleForm").reset()
+    setChosenSalesType("Rental");
+    document.querySelectorAll('input[type=checkbox]').forEach( el => el.checked = false );
+    window.scrollTo(0, 0);
   }
 
   const saveVehicle = event => {
@@ -119,10 +121,10 @@ const AddVehicles = () => {
     fileData.append('vehicle_brand', brandName)
     fileData.append('vehicle_overview', vehicleOverview)
     fileData.append('number_plate', vehiclePlate)
-    fileData.append('price_of_cost', priceOfCost)
-    fileData.append('price_of_sale', priceOfSale)
-    fileData.append('price_per_day', pricePerDay)
-    fileData.append('price_per_month', pricePerMonth)
+    fileData.append('price_of_cost', priceOfCost == '' || priceOfCost == null ? '0' : priceOfCost)
+    fileData.append('price_of_sale', priceOfSale == '' || priceOfSale == null  ? '0' : priceOfSale)
+    fileData.append('price_per_day', pricePerDay == '' || pricePerDay == null ? '0' : pricePerDay)
+    fileData.append('price_per_month', pricePerMonth == '' || pricePerMonth == null ? '0' : pricePerMonth)
     fileData.append('fuel_type', fuelType)
     fileData.append('model_year', modelYear)
     fileData.append('seating_capacity', seatingCapacity)
@@ -135,7 +137,7 @@ const AddVehicles = () => {
       }
     })
   };
-
+  
   const validator = (data) => {
     let err = {};
     const brandName = data.get('vehicle_brand');
@@ -473,7 +475,6 @@ const AddVehicles = () => {
 
           <button type="button" className="btn btn-secondary float-end" onClick={clearForm}> Clear </button>
           <button type="submit" className="btn btn-primary float-end mx-2"> Save Changes </button>
-
         </form>
       </Container>
     </section>

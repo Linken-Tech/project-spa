@@ -169,6 +169,7 @@ function UpdateVehicles(){
         setAccessories([])
       }
       document.getElementById("vehicleForm").reset()
+      window.scrollTo(0, 0);
     }
       
     const saveVehicle = event =>{
@@ -199,7 +200,6 @@ function UpdateVehicles(){
 
         updateVehicleById(vehicleId, fileData).then(response => 
         { 
-          console.log(response);
           if (response?.request?.statusText != "Bad Request"){
             setAlertStatus(true)
             setTimeout(() => {
@@ -208,6 +208,7 @@ function UpdateVehicles(){
               })}, 3000)
           } 
         });
+        window.scrollTo(0, 0);
       }
     };
 
