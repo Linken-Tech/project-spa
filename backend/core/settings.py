@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'rest_framework_simplejwt',
     'storages',
+    'django_filters',
     'user',
     'vehicle',
     'feedback',
