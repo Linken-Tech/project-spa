@@ -13,7 +13,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 import os
 from decouple import config
-from dj_database_url import parse as db_url
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,9 +30,22 @@ DEBUG = DEBUG = config('DEBUG', cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOST', cast=lambda v: [s.strip() for s in v.split(',')])
 
+# Initialize Sentry for issue tracking
+# https://docs.sentry.io/platforms/python/guides/django/configuration/options/
+if DEBUG == False:
+    sentry_sdk.init(
+            dsn=config("SENTRY_DSN"),
+            integrations=[
+                DjangoIntegration(),
+            ],
+            max_breadcrumbs=50,
+            traces_sample_rate=(config("SENTRY_TRACE_RATE")),
+            sample_rate=1,
+            send_default_pii=True,
+            environment="Production",
+        )
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -58,6 +72,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'core.middleware.sentry_middleware.Sentry400Middleware',
 ]
 
 
@@ -86,11 +101,8 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-database_switch = 1
-
-if database_switch == 1:
-    # locahost database
-    DATABASES = {
+# locahost database
+DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
             'NAME': config('DB_NAME'),
@@ -99,12 +111,6 @@ if database_switch == 1:
             'HOST': config('DB_HOST'),
             'PORT': config('DB_PORT', cast=int),
         }
-    }
-elif database_switch == 2:
-    DATABASES = {
-        'default': db_url(
-        'sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3'),
-        )
     }
 
 # Password validation
