@@ -21,18 +21,17 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from django.conf import settings  
 from django.conf.urls.static import static
-from user.views import HealthCheckView
+
+from settings.views import ApiVersioningView, HealthCheckView
 
 # old = get_swagger_view(title='SPA API')
 
 schema_view = get_schema_view(
    openapi.Info(
       title="SPA Project API",
-      default_version='v1',
+      default_version=settings.API_VERSION,
       description="Spa Project V1 API Endpoint",
-    #   terms_of_service="https://www.google.com/policies/terms/",
-    #   contact=openapi.Contact(email="contact@snippets.local"),
-      license=openapi.License(name="Jigo License"),
+      license=openapi.License(name="Linken Tech License"),
    ),
    public=True,
    permission_classes=(permissions.AllowAny,),
@@ -42,7 +41,10 @@ urlpatterns = [
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     re_path(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     re_path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+
     path("health-check/", HealthCheckView.as_view(), name="health-check"),
+    path("version/", ApiVersioningView.as_view(), name="version"),
+
     path('admin/', admin.site.urls),
     path('vehicle/', include('vehicle.urls')),
     path('feedback/',include('feedback.urls')),

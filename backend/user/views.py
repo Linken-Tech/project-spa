@@ -11,7 +11,3 @@ class MenuViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Menu.objects.all()
     
-# @schema(None)
-class HealthCheckView(generics.GenericAPIView):
-    def get(self, request):
-        return Response(status=status.HTTP_200_OK)

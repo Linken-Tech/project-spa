@@ -30,6 +30,8 @@ DEBUG = DEBUG = config('DEBUG', cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOST', cast=lambda v: [s.strip() for s in v.split(',')])
 
+API_VERSION = config("API_VERSION")
+
 # Initialize Sentry for issue tracking
 # https://docs.sentry.io/platforms/python/guides/django/configuration/options/
 if DEBUG == False:
