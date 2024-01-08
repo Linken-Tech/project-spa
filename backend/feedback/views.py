@@ -16,6 +16,7 @@ from rest_framework.views import APIView
 from feedback.serializers import FeedbackSerializer
 from rest_framework.response import Response
 
+
 # Feedback
 class Feedback(APIView):
     def get(self, request, format=None):

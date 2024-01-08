@@ -3,4 +3,4 @@ from user.views import MenuViewSet
 
 
 router = routers.SimpleRouter()
-router.register(r'menu', MenuViewSet, basename='menu')
+router.register(r"menu", MenuViewSet, basename="menu")

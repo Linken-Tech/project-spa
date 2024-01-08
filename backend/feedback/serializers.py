@@ -9,8 +9,9 @@ from pkg_resources import require
 from rest_framework import serializers
 import feedback
 from feedback.models import *
-    
+
+
 class FeedbackSerializer(serializers.ModelSerializer):
     class Meta:
         model = Feedback
-        fields = '__all__'
+        fields = "__all__"
