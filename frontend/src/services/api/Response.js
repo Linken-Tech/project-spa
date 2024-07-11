@@ -25,9 +25,11 @@ export function handleVehiclesResponse(response) {
     }
 
     if (response.data) {
-        response.data.forEach(vehicles => {
-            vehicles.vehicle_images.forEach(vehicle_images => {
-                vehicle_images.vehicle_image = vehicle_images.vehicle_image;
+        response.data.forEach(vehicle => {
+            vehicle.vehicle_images.forEach(vehicle_image => {
+                if (process.env.REACT_APP_ENVIRONMENT === 'development') {
+                    vehicle_image.vehicle_image = `${process.env.REACT_APP_API_BASE_URL}${vehicle_image.vehicle_image}`;
+                }
             });
         });
         return response.data; 
@@ -42,8 +44,10 @@ export function handleVehicleByIdResponse(response) {
     }
 
     if (response.data) {
-        response.data.vehicle_images.forEach(vehicle_images => {
-            vehicle_images.vehicle_image = vehicle_images.vehicle_image;
+        response.data.vehicle_images.forEach(vehicle_image => {
+            if (process.env.REACT_APP_ENVIRONMENT === 'development') {
+                vehicle_image.vehicle_image = `${process.env.REACT_APP_API_BASE_URL}${vehicle_image.vehicle_image}`;
+            }
         });
         return response.data; 
     }
